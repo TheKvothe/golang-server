@@ -9,9 +9,18 @@ import (
 )
 
 type service struct{}
+type Components struct {
+	Components []Component `json:"types"`
+}
+type Component struct {
+	ID          string `json:"ID"`
+	Name        string `json:"Name"`
+	Description string `json:"Description"`
+}
 
 var (
-	repo repository.PostRepository
+	repo           repository.PostRepository
+	componentsRepo repository.ComponentsRepository = repository.NewComponentsRepository()
 )
 
 func NewPostServiceImp(repository repository.PostRepository) PostService {
@@ -38,4 +47,9 @@ func (*service) Create(post *entity.Post) (*entity.Post, error) {
 
 func (*service) FindAll() ([]entity.Post, error) {
 	return repo.FindAll()
+}
+
+func (*service) FindAllType() ([]entity.ComponentType, error) {
+
+	return componentsRepo.FindAllTypes()
 }

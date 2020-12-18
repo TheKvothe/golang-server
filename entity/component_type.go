@@ -1,7 +1,7 @@
 package entity
 
 type ComponentType struct {
-	ID    string  `json:"id"`
-	Name string `json:"Title"`
-	Description  string `json:"Text"`
+	ID          string `json:"id"`
+	Name        string `json:"Title"`
+	Description string `json:"Text"`
 }

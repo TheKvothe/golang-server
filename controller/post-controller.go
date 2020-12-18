@@ -3,7 +3,9 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 
 	"../entity"
 	"../errors"
@@ -13,6 +15,14 @@ import (
 )
 
 type controller struct{}
+type Components struct {
+	Components []Component `json:"types"`
+}
+type Component struct {
+	ID          string `json:"ID"`
+	Name        string `json:"Name"`
+	Description string `json:"Description"`
+}
 
 var (
 	postService    service.PostService
@@ -21,6 +31,8 @@ var (
 
 type PostController interface {
 	GetPosts(response http.ResponseWriter, request *http.Request)
+	GetTypes(response http.ResponseWriter, request *http.Request)
+	GetTypes2(response http.ResponseWriter, request *http.Request)
 	AddPost(response http.ResponseWriter, request *http.Request)
 }
 
@@ -41,6 +53,7 @@ func setService(serviceType string) {
 func (*controller) GetPosts(response http.ResponseWriter, request *http.Request) {
 	//El set service el parametro lo tiene que coger del request
 	setService("implementation")
+	fmt.Print(request)
 	response.Header().Set("Content-Type", "application/json")
 	posts, err := postService.FindAll()
 	if err != nil {
@@ -51,11 +64,43 @@ func (*controller) GetPosts(response http.ResponseWriter, request *http.Request)
 	json.NewEncoder(response).Encode(posts)
 }
 
+func (*controller) GetTypes(response http.ResponseWriter, request *http.Request) {
+	//El set service el parametro lo tiene que coger del request
+	setService("implementation")
+	//fmt.Print(request)
+	response.Header().Set("Content-Type", "application/json")
+	posts, err := postService.FindAllType()
+	//fmt.Println(posts)
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error getting the posts"})
+	}
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(posts)
+}
+
+func (*controller) GetTypes2(response http.ResponseWriter, request *http.Request) {
+	//El set service el parametro lo tiene que coger del request
+	setService("implementation")
+	response.Header().Set("Content-Type", "application/json")
+	file, err := os.Open("/Users/arthurbernal/dev/golang-clean/config/ComponentType.json")
+	_ = err
+	//fmt.Print(file)
+	input, err := ioutil.ReadAll(file)
+	var components Components
+	json.Unmarshal([]byte(input), &components)
+	fmt.Println(components)
+
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(components)
+}
+
 func (*controller) AddPost(response http.ResponseWriter, request *http.Request) {
 	//El set service el parametro lo tiene que coger del request
 	setService("implementation")
 	response.Header().Set("Content-Type", "application/json")
 	var post entity.Post
+	fmt.Print(request)
 	err := json.NewDecoder(request.Body).Decode(&post)
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)

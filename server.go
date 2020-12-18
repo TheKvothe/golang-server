@@ -12,7 +12,7 @@ import (
 var (
 	postRepository repository.PostRepository = repository.NewFirestoreRepository()
 	postController controller.PostController = controller.NewPostController(postRepository)
-	httpRouter     router.Router             = router.NewChiRouter()
+	httpRouter     router.Router             = router.NewMuxRouter()
 )
 
 func main() {
@@ -23,6 +23,7 @@ func main() {
 	})
 
 	httpRouter.GET("/posts", postController.GetPosts)
+	httpRouter.GET("/types", postController.GetTypes)
 	httpRouter.POST("/posts", postController.AddPost)
 
 	httpRouter.SERVE(port)

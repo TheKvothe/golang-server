@@ -1,0 +1,14 @@
+{
+  "types": [
+    {
+      "id": "database",
+      "name": "Database components",
+      "description": "SQL Database components for storing objects"
+    },
+    {
+      "id": "LDAP",
+      "name": "LDAP components",
+      "description": "LDAP components"
+    }
+  ]
+}
